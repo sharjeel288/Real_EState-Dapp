@@ -1,5 +1,5 @@
 const multer = require('multer');
-const id = require('uuid/dist');
+const id = require('uuid');
 
 const v1 = id.v1();
 
