@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { acceptOffer, checkOffer } from '../../actions/property';
+import Alert from '../layout/alert';
 
 const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
   const setOffer = offer => {
@@ -13,6 +14,7 @@ const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
   };
   return (
     <Fragment>
+      <Alert />
       {property.offers.map(offer => (
         <div className='post bg-white p-1 my-1' key={offer._id}>
           <div>

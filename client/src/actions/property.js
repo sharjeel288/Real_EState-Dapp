@@ -351,6 +351,10 @@ export const BuyProperty = (
             type: SELL_PROPERTY,
             payload: res.data,
           });
+          dispatch({
+            type: SET_OFFER,
+            payload: res.data.offers,
+          });
           dispatch(setAlert('Congrats You are the Owner !', 'success'));
 
           history.push('/propertyList');
