@@ -27,7 +27,7 @@ router.post(
   propertyController.createProperty
 );
 //GET::
-//api/property to get all the posts
+//api/property to get all the property
 router.get('/', auth, propertyController.getAllProperty);
 
 //POST::
