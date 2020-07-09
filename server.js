@@ -12,14 +12,14 @@ app.use(express.json());
 
 DbConnect();
 
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
+
 //Routes
 app.use('/api/auth', authApi);
 app.use('/api/user', userApi);
 app.use('/api/property', propertyApi);
 
 //Sever Static  Content
-
-app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

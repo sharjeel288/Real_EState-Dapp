@@ -43,7 +43,7 @@ const singleProperty = ({
             <hr />
             <div className='image'>
               <img
-                src={`${process.env.REACT_APP_URL}${property.image}`}
+                src={`${process.env.REACT_APP_URL}/${property.image}`}
                 alt={property.image}
               />
             </div>
