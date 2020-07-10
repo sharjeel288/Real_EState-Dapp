@@ -15,5 +15,5 @@ export const PROPERTY_ERRORS = 'PROPERTY_ERRORS';
 export const UPDATE_PROPERTY = 'UPDATE_PROPERTY';
 export const CLEAR_PROPERTY = 'CLEAR_PROPERTY';
 export const SET_OFFER = 'SET_OFFER';
-export const EXCEPT_OFFER = 'EXCEPT_OFFER';
 export const SELL_PROPERTY = 'SELL_PROPERTY';
+export const ACCEPT_OFFER = 'ACCEPT_OFFER';

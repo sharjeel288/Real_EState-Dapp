@@ -5,8 +5,8 @@ import {
   PROPERTY_ERRORS,
   CLEAR_PROPERTY,
   SET_OFFER,
-  EXCEPT_OFFER,
   SELL_PROPERTY,
+  ACCEPT_OFFER,
 } from './types';
 import axios from 'axios';
 import { setAlert } from './alert';
@@ -82,7 +82,12 @@ export const createAndUpdateProperty = (
             .send({ from: account[0] })
             .on('transactionHash', receipt => {
               console.log('setPropertyMetaData', receipt);
-
+              dispatch(
+                setAlert('Please wait Transaction is in Proccess', 'dark')
+              );
+            })
+            .on('receipt', receipt => {
+              console.log(receipt);
               dispatch({
                 type: GET_PROPERTY,
                 payload: res.data,
@@ -148,7 +153,12 @@ export const editProperty = (
       await Contract.methods
         .setPropertyValue(ownerAccount, tokenId, formData.price)
         .send({ from: ownerAccount })
-        .on('transactionHash', async hash => {
+        .on('transactionHash', hash => {
+          dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
+        })
+        .on('receipt', async receipt => {
+          console.log(receipt);
+
           const res = await axios.put(`/api/property/${propId}`, body, config);
           console.log(res.data);
           dispatch({
@@ -212,6 +222,9 @@ export const setOffer = (propId, formData, tokenId) => async dispatch => {
       await Contract.methods
         ._BuyPropertyOffer(account[0], tokenId, formData.offerValue)
         .send({ from: account[0] })
+        .on('transactionHash', hash => {
+          dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
+        })
         .on('receipt', async receipt => {
           console.log(receipt);
           const res = await axios.post(
@@ -222,11 +235,6 @@ export const setOffer = (propId, formData, tokenId) => async dispatch => {
           dispatch({
             type: SET_OFFER,
             payload: res.data,
-          });
-
-          dispatch({
-            type: EXCEPT_OFFER,
-            payload: false,
           });
 
           dispatch(setAlert('Offer Created', 'success'));
@@ -261,7 +269,12 @@ export const setOffer = (propId, formData, tokenId) => async dispatch => {
 
 // Accept offer of the Buyer
 
-export const acceptOffer = (tokenId, offer) => async dispatch => {
+export const acceptOffer = (
+  tokenId,
+  offer,
+  propId,
+  offerId
+) => async dispatch => {
   const web3 = window.web3;
   const Contract = new web3.eth.Contract(Contract_ABI, Contract_ADDRESS);
   const ownerAccount = await Contract.methods.ownerOf(tokenId).call();
@@ -273,8 +286,16 @@ export const acceptOffer = (tokenId, offer) => async dispatch => {
         .OfferAcceptedOrRejected(ownerAccount, tokenId, offer)
         .send({ from: ownerAccount })
         .on('transactionHash', hash => {
-          console.log(hash);
-
+          dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
+        })
+        .on('receipt', async receipt => {
+          const res = await axios.get(
+            `/api/property/acceptOffer/${propId}/${offerId}/${offer}`
+          );
+          dispatch({
+            type: ACCEPT_OFFER,
+            payload: res.data,
+          });
           if (offer) {
             dispatch(setAlert('Offer Accepted', 'success'));
           } else {
@@ -304,10 +325,6 @@ export const checkOffer = tokenId => async dispatch => {
       .call();
     console.log(offer);
     if (offer) {
-      dispatch({
-        type: EXCEPT_OFFER,
-        payload: offer,
-      });
       dispatch(setAlert('Congratulations your offer is Accepted', 'success'));
     } else {
       dispatch(
@@ -343,6 +360,9 @@ export const BuyProperty = (
         .send({
           from: account[0],
           value: value,
+        })
+        .on('transactionHash', hash => {
+          dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
         })
         .on('receipt', async receipt => {
           console.log(receipt);

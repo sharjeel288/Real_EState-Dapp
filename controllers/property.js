@@ -112,6 +112,7 @@ exports.createOffer = async (req, res, next) => {
     const offer = {
       user: user._id,
       offerValue: req.body.offerValue,
+      accept: false,
     };
     const property = await Property.findById(req.params.id);
     if (!property) {
@@ -128,6 +129,43 @@ exports.createOffer = async (req, res, next) => {
     property.offers.unshift(offer);
     await property.save();
 
+    return res.json(property.offers);
+  } catch (error) {
+    console.log(error.message);
+    if (error.kind === 'objectId') {
+      return res.status(404).json({ msg: 'property not found' });
+    }
+    res.status(500).send('Server error');
+  }
+};
+
+//Accept Property Offer
+
+exports.acceptOffer = async (req, res, next) => {
+  try {
+    const property = await Property.findById(req.params.propId);
+    if (!property) {
+      return res.status(404).json({ msg: 'Property not found' });
+    }
+
+    const offer = property.offers.filter(
+      offer => offer._id.toString() === req.params.offerId
+    );
+    if (!offer) {
+      return res.status(404).json({ msg: 'offer not found' });
+    }
+
+    property.offers = property.offers.filter(
+      offer => offer._id.toString() !== req.params.offerId
+    );
+
+    const [off] = offer;
+    console.log(off);
+    off.accept = req.params.offer;
+
+    property.offers.unshift(off);
+
+    await property.save();
     return res.json(property.offers);
   } catch (error) {
     console.log(error.message);

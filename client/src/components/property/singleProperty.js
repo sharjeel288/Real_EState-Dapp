@@ -11,14 +11,14 @@ import { BuyProperty } from '../../actions/property';
 const singleProperty = ({
   BuyProperty,
   match,
-  property: { property, loading, offer },
+  property: { property, loading },
   auth,
   getSingleProperty,
   history,
 }) => {
   useEffect(() => {
     getSingleProperty(match.params.id);
-  }, [offer]);
+  }, []);
 
   const sellProp = () => {
     let offerVal = {};
@@ -32,6 +32,7 @@ const singleProperty = ({
 
     BuyProperty(property._id, property.tokenId, offerVal, history);
   };
+
   return (
     <Fragment>
       {property === null || loading ? (
@@ -47,6 +48,7 @@ const singleProperty = ({
                 alt={property.image}
               />
             </div>
+            <h2>Owner:: {property.user.name}</h2>
             <h2>{property.price}ETH</h2>
             <p>{property.description}</p>
             <div className='card__actions'>
@@ -55,14 +57,17 @@ const singleProperty = ({
                   Edit
                 </Link>
               )}
-              {offer && (
-                <button
-                  type='button'
-                  className='btn btn-success'
-                  onClick={e => sellProp()}
-                >
-                  Buy
-                </button>
+              {property.offers.map(offer =>
+                property.user._id !== auth.user._id && offer.accept ? (
+                  <button
+                    key={offer._id}
+                    type='button'
+                    className='btn btn-success'
+                    onClick={e => sellProp()}
+                  >
+                    Buy
+                  </button>
+                ) : null
               )}
               <Link to='/propertyList' className='btn'>
                 Go Back

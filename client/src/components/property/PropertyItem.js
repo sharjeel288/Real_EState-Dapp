@@ -6,58 +6,62 @@ import { acceptOffer, checkOffer } from '../../actions/property';
 import Alert from '../layout/alert';
 
 const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
-  const setOffer = offer => {
-    acceptOffer(property.tokenId, offer);
+  const setOffer = (ofer, offerId) => {
+    acceptOffer(property.tokenId, ofer, property._id, offerId);
   };
   const CheckingOffer = () => {
     checkOffer(property.tokenId);
   };
+
   return (
     <Fragment>
       <Alert />
-      {property.offers.map(offer => (
-        <div className='post bg-white p-1 my-1' key={offer._id}>
-          <div>
-            <p className='my-1'>
-              <strong>Price Offer</strong>{' '}
-              <strong>{offer.offerValue}ETH</strong>
-            </p>
-            <p className='post-date'>
-              Posted on {<Moment format='YYYY/MM/DD'>{offer.date}</Moment>}
-            </p>
-            {property.user._id !== auth.user._id &&
-              offer.user === auth.user._id &&
-              offer.offerValue && (
-                <button
-                  type='button'
-                  className='btn btn-success'
-                  onClick={e => CheckingOffer()}
-                >
-                  Check your offer
-                </button>
-              )}
-            {!auth.isLoading && property.user._id === auth.user._id && (
-              <Fragment>
-                <button
-                  type='button'
-                  className='btn btn-success'
-                  onClick={e => setOffer(true)}
-                >
-                  <i className='fas fa-check'></i>
-                </button>
 
-                <button
-                  type='button'
-                  className='btn btn-danger'
-                  onClick={e => setOffer(false)}
-                >
-                  <i className='fas fa-times'></i>
-                </button>
-              </Fragment>
-            )}
+      <Fragment>
+        {property.offers.map(offer => (
+          <div className='post bg-white p-1 my-1' key={offer._id}>
+            <div>
+              <p className='my-1'>
+                <strong>Price Offer</strong>{' '}
+                <strong>{offer.offerValue}ETH</strong>
+              </p>
+              <p className='post-date'>
+                Posted on {<Moment format='YYYY/MM/DD'>{offer.date}</Moment>}
+              </p>
+              {property.user._id !== auth.user._id &&
+                offer.user === auth.user._id &&
+                offer.offerValue && (
+                  <button
+                    type='button'
+                    className='btn btn-success'
+                    onClick={e => CheckingOffer()}
+                  >
+                    Check your offer
+                  </button>
+                )}
+              {!auth.isLoading && property.user._id === auth.user._id && (
+                <Fragment>
+                  <button
+                    type='button'
+                    className='btn btn-success'
+                    onClick={e => setOffer(true, offer._id)}
+                  >
+                    <i className='fas fa-check'></i>
+                  </button>
+
+                  <button
+                    type='button'
+                    className='btn btn-danger'
+                    onClick={e => setOffer(false, offer._id)}
+                  >
+                    <i className='fas fa-times'></i>
+                  </button>
+                </Fragment>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </Fragment>
     </Fragment>
   );
 };

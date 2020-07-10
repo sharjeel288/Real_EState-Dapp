@@ -79,6 +79,14 @@ router.put(
 
 router.get('/sell/:propId', auth, propertyController.sellProperty);
 
+//Post::
+//api/property/acceptOffer/:offerId to accept the offer of the user
+router.get(
+  '/acceptOffer/:propId/:offerId/:offer',
+  auth,
+  propertyController.acceptOffer
+);
+
 //Delete::
 //api/property/delete/:propId to delete the property
 

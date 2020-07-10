@@ -5,8 +5,8 @@ import {
   UPDATE_PROPERTY,
   CLEAR_PROPERTY,
   SET_OFFER,
-  EXCEPT_OFFER,
   SELL_PROPERTY,
+  ACCEPT_OFFER,
 } from '../actions/types';
 
 const initialState = {
@@ -36,15 +36,10 @@ export default function(state = initialState, action) {
         loading: false,
       };
     case SET_OFFER:
+    case ACCEPT_OFFER:
       return {
         ...state,
         property: { ...state.property, offers: payload },
-        loading: false,
-      };
-    case EXCEPT_OFFER:
-      return {
-        ...state,
-        offer: payload,
         loading: false,
       };
     case PROPERTY_ERRORS:
@@ -58,7 +53,6 @@ export default function(state = initialState, action) {
         ...state,
         property: null,
         loading: true,
-        offer: false,
       };
 
     default:
