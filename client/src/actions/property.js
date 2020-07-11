@@ -58,73 +58,57 @@ export const createAndUpdateProperty = (
   history,
   price
 ) => async dispatch => {
+  //Creating Property on BlockChain
+  let id = '';
+  console.log(price);
+  const web3 = window.web3;
+  const Contract = new web3.eth.Contract(Contract_ABI, Contract_ADDRESS);
+  const account = await web3.eth.getAccounts();
+
   try {
-    //Creating Property on BlockChain
-    let id = '';
-    console.log(price);
-    const web3 = window.web3;
-    const Contract = new web3.eth.Contract(Contract_ABI, Contract_ADDRESS);
-    const account = await web3.eth.getAccounts();
+    const res = await axios.post('/api/property', formData);
+    id = res.data._id;
     await Contract.methods
-      .registerProperty(price)
+      .setPropertyMetaData(
+        account[0],
+        res.data.tokenId,
+        `http://localhost:3000/detail/${res.data._id}`,
+        res.data.price
+      )
       .send({ from: account[0] })
-      .on('transactionHash', async receipt => {
+      .on('transactionHash', receipt => {
+        console.log('setPropertyMetaData', receipt);
+        dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
+      })
+      .on('receipt', receipt => {
         console.log(receipt);
-        try {
-          const res = await axios.post('/api/property', formData);
-          id = res.data._id;
-          await Contract.methods
-            .setPropertyMetaData(
-              account[0],
-              res.data.tokenId,
-              `http://localhost:3000/detail/${res.data._id}`
-            )
-            .send({ from: account[0] })
-            .on('transactionHash', receipt => {
-              console.log('setPropertyMetaData', receipt);
-              dispatch(
-                setAlert('Please wait Transaction is in Proccess', 'dark')
-              );
-            })
-            .on('receipt', receipt => {
-              console.log(receipt);
-              dispatch({
-                type: GET_PROPERTY,
-                payload: res.data,
-              });
-              dispatch(setAlert('Property Created', 'success'));
-              history.push('/propertyList');
-            });
-        } catch (error) {
-          if (error.code === 4001) {
-            const response = await axios.delete(`/api/property/delete/${id}`);
-            dispatch(setAlert(response.data.msg, 'success'));
-            console.log('Tx ERROR', error.message);
-            dispatch(setAlert(error.message, 'danger'));
-          } else if (error.response.status === 400) {
-            console.log(error.response);
-            const err = error.response.data.errors;
-            console.log(err);
-            if (err) {
-              err.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-            }
-            dispatch({
-              type: PROPERTY_ERRORS,
-              payload: {
-                msg: error.response.statusText,
-                status: error.response.status,
-              },
-            });
-          }
-        }
+        dispatch({
+          type: GET_PROPERTY,
+          payload: res.data,
+        });
+        dispatch(setAlert('Property Created', 'success'));
+        history.push('/propertyList');
       });
   } catch (error) {
     if (error.code === 4001) {
-      console.log('tx error:', error);
-      dispatch(setAlert(error.message, 'danger'));
-    } else if (error.code !== 4001) {
+      const response = await axios.delete(`/api/property/delete/${id}`);
+      dispatch(setAlert(response.data.msg, 'success'));
       console.log('Tx ERROR', error.message);
       dispatch(setAlert(error.message, 'danger'));
+    } else if (error.response.status === 400) {
+      console.log(error.response);
+      const err = error.response.data.errors;
+      console.log(err);
+      if (err) {
+        err.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+      }
+      dispatch({
+        type: PROPERTY_ERRORS,
+        payload: {
+          msg: error.response.statusText,
+          status: error.response.status,
+        },
+      });
     }
   }
 };
