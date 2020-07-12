@@ -58,7 +58,7 @@ const singleProperty = ({
                 </Link>
               )}
               {property.offers.map(offer =>
-                property.user._id !== auth.user._id && offer.accept ? (
+                offer.user === auth.user._id && offer.accept ? (
                   <button
                     key={offer._id}
                     type='button'
