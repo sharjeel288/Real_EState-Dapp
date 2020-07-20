@@ -31,10 +31,10 @@ router.post(
 router.get('/', auth, propertyController.getAllProperty);
 
 //POST::
-//api/property/offer/:id to set the offer for property
+//api/property/offer/:id/:userAcc to set the offer for property
 
 router.post(
-  '/offer/:id',
+  '/offer/:id/:userAcc',
   [
     auth,
     [

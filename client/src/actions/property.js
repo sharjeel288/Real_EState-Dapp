@@ -198,8 +198,6 @@ export const setOffer = (propId, formData, tokenId) => async dispatch => {
     const ownerAccount = await Contract.methods.ownerOf(tokenId).call();
     console.log(ownerAccount.toString());
 
-    console.log(formData);
-
     if (Account !== ownerAccount.toString()) {
       //Creating Property Offer on BlockChain
 
@@ -212,7 +210,7 @@ export const setOffer = (propId, formData, tokenId) => async dispatch => {
         .on('receipt', async receipt => {
           console.log(receipt);
           const res = await axios.post(
-            `/api/property/offer/${propId}`,
+            `/api/property/offer/${propId}/${account[0]}`,
             body,
             config
           );
@@ -257,7 +255,8 @@ export const acceptOffer = (
   tokenId,
   offer,
   propId,
-  offerId
+  offerId,
+  buyerAcc
 ) => async dispatch => {
   const web3 = window.web3;
   const Contract = new web3.eth.Contract(Contract_ABI, Contract_ADDRESS);
@@ -267,7 +266,7 @@ export const acceptOffer = (
   if (Account === ownerAccount.toString()) {
     try {
       await Contract.methods
-        .OfferAcceptedOrRejected(ownerAccount, tokenId, offer)
+        .OfferAcceptedOrRejected(ownerAccount, tokenId, offer, buyerAcc)
         .send({ from: ownerAccount })
         .on('transactionHash', hash => {
           dispatch(setAlert('Please wait Transaction is in Proccess', 'dark'));
@@ -298,14 +297,14 @@ export const acceptOffer = (
 
 //check your Offer
 
-export const checkOffer = tokenId => async dispatch => {
+export const checkOffer = (tokenId, buyerAdd) => async dispatch => {
   const web3 = window.web3;
   const Contract = new web3.eth.Contract(Contract_ABI, Contract_ADDRESS);
   const ownerAccount = await Contract.methods.ownerOf(tokenId).call();
-  const account = await web3.eth.getAccounts();
+
   if (Account !== ownerAccount.toString()) {
     const offer = await Contract.methods
-      ._CheckYourOfferisAccepted(account[0], tokenId)
+      ._CheckYourOfferisAccepted(buyerAdd, tokenId)
       .call();
     console.log(offer);
     if (offer) {

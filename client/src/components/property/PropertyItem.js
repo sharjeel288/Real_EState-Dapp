@@ -6,11 +6,11 @@ import { acceptOffer, checkOffer } from '../../actions/property';
 import Alert from '../layout/alert';
 
 const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
-  const setOffer = (ofer, offerId) => {
-    acceptOffer(property.tokenId, ofer, property._id, offerId);
+  const setOffer = (ofer, offerId, userAcc) => {
+    acceptOffer(property.tokenId, ofer, property._id, offerId, userAcc);
   };
-  const CheckingOffer = () => {
-    checkOffer(property.tokenId);
+  const CheckingOffer = userAcc => {
+    checkOffer(property.tokenId, userAcc);
   };
 
   return (
@@ -34,7 +34,7 @@ const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
                   <button
                     type='button'
                     className='btn btn-success'
-                    onClick={e => CheckingOffer()}
+                    onClick={e => CheckingOffer(offer.account)}
                   >
                     Check your offer
                   </button>
@@ -44,7 +44,7 @@ const PropertyItem = ({ property, auth, acceptOffer, checkOffer }) => {
                   <button
                     type='button'
                     className='btn btn-success'
-                    onClick={e => setOffer(true, offer._id)}
+                    onClick={e => setOffer(true, offer._id, offer.account)}
                   >
                     <i className='fas fa-check'></i>
                   </button>

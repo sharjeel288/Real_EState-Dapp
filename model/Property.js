@@ -36,6 +36,9 @@ const propertySchema = new mongoose.Schema({
       accept: {
         type: Boolean,
       },
+      account: {
+        type: String,
+      },
       date: {
         type: Date,
         default: Date.now(),

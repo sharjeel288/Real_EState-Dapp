@@ -113,6 +113,7 @@ exports.createOffer = async (req, res, next) => {
       user: user._id,
       offerValue: req.body.offerValue,
       accept: false,
+      account: req.params.userAcc,
     };
     const property = await Property.findById(req.params.id);
     if (!property) {

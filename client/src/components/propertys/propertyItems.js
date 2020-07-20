@@ -11,7 +11,7 @@ const propertyItems = ({
         <h1 className='product__title'>{location}</h1>
       </header>
       <div className='card__image'>
-        <img src={`${process.env.REACT_APP_URL}/${image}`} alt={image} />
+        <img src={`${process.env.REACT_APP_URL}${image}`} alt={image} />
       </div>
       <div className='card__content'>
         <h2 className='product__price'>{price}ETH</h2>
